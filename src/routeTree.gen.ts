@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
+import { Route as AuthenticatedMantenimientosNuevoRouteImport } from './routes/_authenticated/mantenimientos.nuevo'
 import { Route as AuthenticatedVehiculosPlacaRouteImport } from './routes/_authenticated/vehiculos.$placa'
 import { Route as AuthenticatedVehiculosNuevoRouteImport } from './routes/_authenticated/vehiculos.nuevo'
 
@@ -41,6 +42,12 @@ const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
   path: '/panel',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMantenimientosNuevoRoute =
+  AuthenticatedMantenimientosNuevoRouteImport.update({
+    id: '/mantenimientos/nuevo',
+    path: '/mantenimientos/nuevo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedVehiculosPlacaRoute =
   AuthenticatedVehiculosPlacaRouteImport.update({
     id: '/vehiculos/$placa',
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/panel': typeof AuthenticatedPanelRoute
+  '/mantenimientos/nuevo': typeof AuthenticatedMantenimientosNuevoRoute
   '/vehiculos/$placa': typeof AuthenticatedVehiculosPlacaRoute
   '/vehiculos/nuevo': typeof AuthenticatedVehiculosNuevoRoute
 }
@@ -67,6 +75,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/clientes': typeof AuthenticatedClientesRoute
   '/panel': typeof AuthenticatedPanelRoute
+  '/mantenimientos/nuevo': typeof AuthenticatedMantenimientosNuevoRoute
   '/vehiculos/$placa': typeof AuthenticatedVehiculosPlacaRoute
   '/vehiculos/nuevo': typeof AuthenticatedVehiculosNuevoRoute
 }
@@ -77,6 +86,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/clientes': typeof AuthenticatedClientesRoute
   '/_authenticated/panel': typeof AuthenticatedPanelRoute
+  '/_authenticated/mantenimientos/nuevo': typeof AuthenticatedMantenimientosNuevoRoute
   '/_authenticated/vehiculos/$placa': typeof AuthenticatedVehiculosPlacaRoute
   '/_authenticated/vehiculos/nuevo': typeof AuthenticatedVehiculosNuevoRoute
 }
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/clientes'
     | '/panel'
+    | '/mantenimientos/nuevo'
     | '/vehiculos/$placa'
     | '/vehiculos/nuevo'
   fileRoutesByTo: FileRoutesByTo
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/clientes'
     | '/panel'
+    | '/mantenimientos/nuevo'
     | '/vehiculos/$placa'
     | '/vehiculos/nuevo'
   id:
@@ -104,6 +116,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/clientes'
     | '/_authenticated/panel'
+    | '/_authenticated/mantenimientos/nuevo'
     | '/_authenticated/vehiculos/$placa'
     | '/_authenticated/vehiculos/nuevo'
   fileRoutesById: FileRoutesById
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPanelRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/mantenimientos/nuevo': {
+      id: '/_authenticated/mantenimientos/nuevo'
+      path: '/mantenimientos/nuevo'
+      fullPath: '/mantenimientos/nuevo'
+      preLoaderRoute: typeof AuthenticatedMantenimientosNuevoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/vehiculos/$placa': {
       id: '/_authenticated/vehiculos/$placa'
       path: '/vehiculos/$placa'
@@ -171,6 +191,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
   AuthenticatedPanelRoute: typeof AuthenticatedPanelRoute
+  AuthenticatedMantenimientosNuevoRoute: typeof AuthenticatedMantenimientosNuevoRoute
   AuthenticatedVehiculosPlacaRoute: typeof AuthenticatedVehiculosPlacaRoute
   AuthenticatedVehiculosNuevoRoute: typeof AuthenticatedVehiculosNuevoRoute
 }
@@ -178,6 +199,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClientesRoute: AuthenticatedClientesRoute,
   AuthenticatedPanelRoute: AuthenticatedPanelRoute,
+  AuthenticatedMantenimientosNuevoRoute: AuthenticatedMantenimientosNuevoRoute,
   AuthenticatedVehiculosPlacaRoute: AuthenticatedVehiculosPlacaRoute,
   AuthenticatedVehiculosNuevoRoute: AuthenticatedVehiculosNuevoRoute,
 }
