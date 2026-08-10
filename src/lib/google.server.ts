@@ -146,7 +146,7 @@ export type EventoInput = {
   descripcion: string;
   fecha: string; // YYYY-MM-DD (evento de dia completo)
   emailCliente: string;
-  eventId?: string | null;
+  eventId?: string | null | undefined;
 };
 
 function eventBody(input: EventoInput) {
