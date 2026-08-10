@@ -10,33 +10,121 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
+import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
+import { Route as AuthenticatedMantenimientosNuevoRouteImport } from './routes/_authenticated/mantenimientos.nuevo'
+import { Route as AuthenticatedVehiculosPlacaRouteImport } from './routes/_authenticated/vehiculos.$placa'
+import { Route as AuthenticatedVehiculosNuevoRouteImport } from './routes/_authenticated/vehiculos.nuevo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedClientesRoute = AuthenticatedClientesRouteImport.update({
+  id: '/clientes',
+  path: '/clientes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
+  id: '/panel',
+  path: '/panel',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMantenimientosNuevoRoute =
+  AuthenticatedMantenimientosNuevoRouteImport.update({
+    id: '/mantenimientos/nuevo',
+    path: '/mantenimientos/nuevo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedVehiculosPlacaRoute =
+  AuthenticatedVehiculosPlacaRouteImport.update({
+    id: '/vehiculos/$placa',
+    path: '/vehiculos/$placa',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedVehiculosNuevoRoute =
+  AuthenticatedVehiculosNuevoRouteImport.update({
+    id: '/vehiculos/nuevo',
+    path: '/vehiculos/nuevo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/clientes': typeof AuthenticatedClientesRoute
+  '/panel': typeof AuthenticatedPanelRoute
+  '/mantenimientos/nuevo': typeof AuthenticatedMantenimientosNuevoRoute
+  '/vehiculos/$placa': typeof AuthenticatedVehiculosPlacaRoute
+  '/vehiculos/nuevo': typeof AuthenticatedVehiculosNuevoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/clientes': typeof AuthenticatedClientesRoute
+  '/panel': typeof AuthenticatedPanelRoute
+  '/mantenimientos/nuevo': typeof AuthenticatedMantenimientosNuevoRoute
+  '/vehiculos/$placa': typeof AuthenticatedVehiculosPlacaRoute
+  '/vehiculos/nuevo': typeof AuthenticatedVehiculosNuevoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/clientes': typeof AuthenticatedClientesRoute
+  '/_authenticated/panel': typeof AuthenticatedPanelRoute
+  '/_authenticated/mantenimientos/nuevo': typeof AuthenticatedMantenimientosNuevoRoute
+  '/_authenticated/vehiculos/$placa': typeof AuthenticatedVehiculosPlacaRoute
+  '/_authenticated/vehiculos/nuevo': typeof AuthenticatedVehiculosNuevoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/clientes'
+    | '/panel'
+    | '/mantenimientos/nuevo'
+    | '/vehiculos/$placa'
+    | '/vehiculos/nuevo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/clientes'
+    | '/panel'
+    | '/mantenimientos/nuevo'
+    | '/vehiculos/$placa'
+    | '/vehiculos/nuevo'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/clientes'
+    | '/_authenticated/panel'
+    | '/_authenticated/mantenimientos/nuevo'
+    | '/_authenticated/vehiculos/$placa'
+    | '/_authenticated/vehiculos/nuevo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +136,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/clientes': {
+      id: '/_authenticated/clientes'
+      path: '/clientes'
+      fullPath: '/clientes'
+      preLoaderRoute: typeof AuthenticatedClientesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/panel': {
+      id: '/_authenticated/panel'
+      path: '/panel'
+      fullPath: '/panel'
+      preLoaderRoute: typeof AuthenticatedPanelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mantenimientos/nuevo': {
+      id: '/_authenticated/mantenimientos/nuevo'
+      path: '/mantenimientos/nuevo'
+      fullPath: '/mantenimientos/nuevo'
+      preLoaderRoute: typeof AuthenticatedMantenimientosNuevoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vehiculos/$placa': {
+      id: '/_authenticated/vehiculos/$placa'
+      path: '/vehiculos/$placa'
+      fullPath: '/vehiculos/$placa'
+      preLoaderRoute: typeof AuthenticatedVehiculosPlacaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vehiculos/nuevo': {
+      id: '/_authenticated/vehiculos/nuevo'
+      path: '/vehiculos/nuevo'
+      fullPath: '/vehiculos/nuevo'
+      preLoaderRoute: typeof AuthenticatedVehiculosNuevoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedClientesRoute: typeof AuthenticatedClientesRoute
+  AuthenticatedPanelRoute: typeof AuthenticatedPanelRoute
+  AuthenticatedMantenimientosNuevoRoute: typeof AuthenticatedMantenimientosNuevoRoute
+  AuthenticatedVehiculosPlacaRoute: typeof AuthenticatedVehiculosPlacaRoute
+  AuthenticatedVehiculosNuevoRoute: typeof AuthenticatedVehiculosNuevoRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedClientesRoute: AuthenticatedClientesRoute,
+  AuthenticatedPanelRoute: AuthenticatedPanelRoute,
+  AuthenticatedMantenimientosNuevoRoute: AuthenticatedMantenimientosNuevoRoute,
+  AuthenticatedVehiculosPlacaRoute: AuthenticatedVehiculosPlacaRoute,
+  AuthenticatedVehiculosNuevoRoute: AuthenticatedVehiculosNuevoRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

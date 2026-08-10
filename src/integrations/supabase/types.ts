@@ -14,7 +14,302 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clientes: {
+        Row: {
+          celular_principal: string
+          ciudad: string | null
+          created_at: string
+          departamento: string | null
+          direccion: string | null
+          email: string
+          id: string
+          nombre_completo: string
+          numero_documento: string
+          razon_social: string | null
+          telefono_secundario: string | null
+          tipo_documento: string
+          updated_at: string
+        }
+        Insert: {
+          celular_principal: string
+          ciudad?: string | null
+          created_at?: string
+          departamento?: string | null
+          direccion?: string | null
+          email: string
+          id?: string
+          nombre_completo: string
+          numero_documento: string
+          razon_social?: string | null
+          telefono_secundario?: string | null
+          tipo_documento?: string
+          updated_at?: string
+        }
+        Update: {
+          celular_principal?: string
+          ciudad?: string | null
+          created_at?: string
+          departamento?: string | null
+          direccion?: string | null
+          email?: string
+          id?: string
+          nombre_completo?: string
+          numero_documento?: string
+          razon_social?: string | null
+          telefono_secundario?: string | null
+          tipo_documento?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      documentos_vencimiento: {
+        Row: {
+          calendar_event_id: string | null
+          categorias: string | null
+          created_at: string
+          fecha_expedicion: string | null
+          fecha_vencimiento: string
+          id: string
+          numero_documento: string | null
+          tipo_documento: string
+          updated_at: string
+          vehiculo_id: string
+        }
+        Insert: {
+          calendar_event_id?: string | null
+          categorias?: string | null
+          created_at?: string
+          fecha_expedicion?: string | null
+          fecha_vencimiento: string
+          id?: string
+          numero_documento?: string | null
+          tipo_documento: string
+          updated_at?: string
+          vehiculo_id: string
+        }
+        Update: {
+          calendar_event_id?: string | null
+          categorias?: string | null
+          created_at?: string
+          fecha_expedicion?: string | null
+          fecha_vencimiento?: string
+          id?: string
+          numero_documento?: string | null
+          tipo_documento?: string
+          updated_at?: string
+          vehiculo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documentos_vencimiento_vehiculo_id_fkey"
+            columns: ["vehiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vehiculos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      historial_mantenimientos: {
+        Row: {
+          calendar_event_id: string | null
+          costo_mano_obra: number
+          costo_repuestos: number
+          created_at: string
+          diagnostico: string | null
+          drive_folder_url: string | null
+          fecha_servicio: string
+          fotos_urls: string[]
+          hora_entrada: string | null
+          id: string
+          iva_porcentaje: number
+          kilometraje: number
+          km_promedio_dia: number | null
+          placa: string
+          procedimiento: string | null
+          proxima_fecha: string | null
+          proximo_km: number | null
+          repuestos_cambiados: string | null
+          tipos_servicio: string[]
+          updated_at: string
+          valor_total: number
+          vehiculo_id: string
+        }
+        Insert: {
+          calendar_event_id?: string | null
+          costo_mano_obra?: number
+          costo_repuestos?: number
+          created_at?: string
+          diagnostico?: string | null
+          drive_folder_url?: string | null
+          fecha_servicio: string
+          fotos_urls?: string[]
+          hora_entrada?: string | null
+          id?: string
+          iva_porcentaje?: number
+          kilometraje: number
+          km_promedio_dia?: number | null
+          placa: string
+          procedimiento?: string | null
+          proxima_fecha?: string | null
+          proximo_km?: number | null
+          repuestos_cambiados?: string | null
+          tipos_servicio?: string[]
+          updated_at?: string
+          valor_total?: number
+          vehiculo_id: string
+        }
+        Update: {
+          calendar_event_id?: string | null
+          costo_mano_obra?: number
+          costo_repuestos?: number
+          created_at?: string
+          diagnostico?: string | null
+          drive_folder_url?: string | null
+          fecha_servicio?: string
+          fotos_urls?: string[]
+          hora_entrada?: string | null
+          id?: string
+          iva_porcentaje?: number
+          kilometraje?: number
+          km_promedio_dia?: number | null
+          placa?: string
+          procedimiento?: string | null
+          proxima_fecha?: string | null
+          proximo_km?: number | null
+          repuestos_cambiados?: string | null
+          tipos_servicio?: string[]
+          updated_at?: string
+          valor_total?: number
+          vehiculo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "historial_mantenimientos_vehiculo_id_fkey"
+            columns: ["vehiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vehiculos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personal_presente: {
+        Row: {
+          created_at: string
+          id: string
+          mantenimiento_id: string
+          nombre: string | null
+          rol: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mantenimiento_id: string
+          nombre?: string | null
+          rol: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mantenimiento_id?: string
+          nombre?: string | null
+          rol?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personal_presente_mantenimiento_id_fkey"
+            columns: ["mantenimiento_id"]
+            isOneToOne: false
+            referencedRelation: "historial_mantenimientos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehiculos: {
+        Row: {
+          cilindrada: string | null
+          cliente_id: string | null
+          color: string | null
+          created_at: string
+          fecha_matricula: string | null
+          foto_url: string | null
+          id: string
+          km_ano: number | null
+          km_intervalo_aceite: number
+          km_mes: number | null
+          km_promedio_dia: number | null
+          km_semana: number | null
+          marca: string | null
+          meses_intervalo_aceite: number
+          modelo_ano: string | null
+          numero_chasis: string | null
+          numero_motor: string | null
+          organismo_transito: string | null
+          placa: string
+          tipo_carroceria: string | null
+          tipo_combustible: string | null
+          tipo_vehiculo: string
+          updated_at: string
+        }
+        Insert: {
+          cilindrada?: string | null
+          cliente_id?: string | null
+          color?: string | null
+          created_at?: string
+          fecha_matricula?: string | null
+          foto_url?: string | null
+          id?: string
+          km_ano?: number | null
+          km_intervalo_aceite?: number
+          km_mes?: number | null
+          km_promedio_dia?: number | null
+          km_semana?: number | null
+          marca?: string | null
+          meses_intervalo_aceite?: number
+          modelo_ano?: string | null
+          numero_chasis?: string | null
+          numero_motor?: string | null
+          organismo_transito?: string | null
+          placa: string
+          tipo_carroceria?: string | null
+          tipo_combustible?: string | null
+          tipo_vehiculo?: string
+          updated_at?: string
+        }
+        Update: {
+          cilindrada?: string | null
+          cliente_id?: string | null
+          color?: string | null
+          created_at?: string
+          fecha_matricula?: string | null
+          foto_url?: string | null
+          id?: string
+          km_ano?: number | null
+          km_intervalo_aceite?: number
+          km_mes?: number | null
+          km_promedio_dia?: number | null
+          km_semana?: number | null
+          marca?: string | null
+          meses_intervalo_aceite?: number
+          modelo_ano?: string | null
+          numero_chasis?: string | null
+          numero_motor?: string | null
+          organismo_transito?: string | null
+          placa?: string
+          tipo_carroceria?: string | null
+          tipo_combustible?: string | null
+          tipo_vehiculo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehiculos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
