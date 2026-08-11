@@ -64,6 +64,10 @@ const inicial = {
   iva_porcentaje: "0",
   personal: [] as string[],
   nombres_personal: "",
+  producto_nombre: "",
+  producto_cantidad: "",
+  producto_unidad: "Litros",
+
 };
 
 function NuevoMantenimiento() {
