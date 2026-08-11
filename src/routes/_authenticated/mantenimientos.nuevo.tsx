@@ -365,6 +365,69 @@ function NuevoMantenimiento() {
         </Campo>
       </Seccion>
 
+      <Seccion titulo="Productos e insumos con asistente de IA">
+        <Campo etiqueta="Producto utilizado" ancho="half">
+          <Input
+            value={valores.producto_nombre}
+            onChange={(e) => actualizar("producto_nombre", e.target.value)}
+            placeholder="Aceite 20W-50 semisintético"
+          />
+        </Campo>
+        <Campo etiqueta="Foto del producto" ancho="half">
+          <Input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={(e) => setProductoFoto(e.target.files?.[0] ?? null)}
+          />
+        </Campo>
+        <Campo etiqueta="Cantidad utilizada" ancho="half">
+          <Input
+            type="number"
+            step="0.01"
+            value={valores.producto_cantidad}
+            onChange={(e) => actualizar("producto_cantidad", e.target.value)}
+            placeholder="1.2"
+          />
+        </Campo>
+        <Campo etiqueta="Unidad" ancho="half">
+          <select
+            className={selectClase}
+            value={valores.producto_unidad}
+            onChange={(e) => actualizar("producto_unidad", e.target.value)}
+          >
+            {["Litros", "Mililitros", "Galones", "Unidades"].map((u) => (
+              <option key={u}>{u}</option>
+            ))}
+          </select>
+        </Campo>
+        <Campo etiqueta="Consulta al asistente técnico">
+          <Textarea
+            rows={2}
+            value={consulta}
+            onChange={(e) => setConsulta(e.target.value)}
+            placeholder="¿Este aceite y esta cantidad son óptimos para este vehículo?"
+          />
+        </Campo>
+        <Campo etiqueta="Recomendación">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            disabled={consultarIA.isPending || !vehiculo}
+            onClick={() => consultarIA.mutate()}
+          >
+            {consultarIA.isPending ? "Analizando…" : "Consultar a la IA de lubricación"}
+          </Button>
+          {recomendacion ? (
+            <div className="glass-card mt-3 rounded-xl p-3 text-sm whitespace-pre-wrap">
+              {recomendacion}
+            </div>
+          ) : null}
+        </Campo>
+      </Seccion>
+
+
       <Seccion titulo="Desglose económico">
         <Campo etiqueta="Costo de mano de obra" ancho="half">
           <Input
