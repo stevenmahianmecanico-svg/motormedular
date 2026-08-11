@@ -5,8 +5,11 @@ import { Gauge, Mail, MessageCircle } from "lucide-react";
 import { AccionesCalendario } from "@/components/AccionesCalendario";
 import { AppShell } from "@/components/AppShell";
 import { SemaforoVigencia } from "@/components/SemaforoVigencia";
+import { VisorEvidencias } from "@/components/VisorEvidencias";
 import { Button } from "@/components/ui/button";
+import { enlaceDirectoDrive } from "@/lib/drive";
 import { supabase } from "@/integrations/supabase/client";
+
 import {
   listarDocumentos,
   listarMantenimientos,
