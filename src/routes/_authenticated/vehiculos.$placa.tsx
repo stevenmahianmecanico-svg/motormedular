@@ -255,16 +255,10 @@ function FichaVehiculo() {
                 Próximo: {m.proximo_km?.toLocaleString("es-CO") ?? "—"} km ·{" "}
                 {fechaLegible(m.proxima_fecha)}
               </p>
-              {m.drive_folder_url ? (
-                <a
-                  href={m.drive_folder_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-1 inline-block text-xs text-accent underline"
-                >
-                  Evidencias en Google Drive
-                </a>
+              {m.fotos_urls.length > 0 ? (
+                <VisorEvidencias fotos={m.fotos_urls} titulo={`servicio del ${m.fecha_servicio}`} />
               ) : null}
+
               {m.proxima_fecha ? (
                 <div className="mt-3">
                   <AccionesCalendario
