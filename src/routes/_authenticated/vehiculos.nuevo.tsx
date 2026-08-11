@@ -233,7 +233,30 @@ function NuevoVehiculo() {
 
   return (
     <AppShell titulo="Nuevo vehículo" subtitulo="Ficha técnica, propietario y documentos legales">
+      <Seccion titulo="Lectura automática con IA">
+        <Campo etiqueta="Foto de licencia de tránsito o de conducción">
+          <Input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={(e) => setLicencia(e.target.files?.[0] ?? null)}
+          />
+        </Campo>
+        <Campo etiqueta="Autorelleno">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            disabled={!licencia || leerLicencia.isPending}
+            onClick={() => leerLicencia.mutate()}
+          >
+            {leerLicencia.isPending ? "Leyendo documento…" : "Extraer datos con IA"}
+          </Button>
+        </Campo>
+      </Seccion>
+
       <Seccion titulo="Ficha del vehículo">
+
         <Campo etiqueta="Placa" requerido ancho="half">
           <Input
             value={valores.placa}
