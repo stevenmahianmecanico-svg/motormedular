@@ -21,6 +21,8 @@ import {
 } from "@/lib/datos";
 import { archivoABase64, formatoCorchetes, limpiarTexto, moneda } from "@/lib/formato";
 import { guardarEventoCalendar, subirEvidenciaDrive } from "@/lib/google.functions";
+import { recomendarLubricacion } from "@/lib/ia.functions";
+
 import { calcularKmPorDia, proximoServicio, proyecciones } from "@/lib/telemetria";
 
 export const Route = createFileRoute("/_authenticated/mantenimientos/nuevo")({
