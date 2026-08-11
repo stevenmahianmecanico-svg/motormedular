@@ -8,6 +8,8 @@ import { AppShell } from "@/components/AppShell";
 import { SemaforoVigencia } from "@/components/SemaforoVigencia";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { enlaceDirectoDrive } from "@/lib/drive";
+
 import {
   listarDocumentos,
   listarMantenimientos,
