@@ -82,12 +82,54 @@ function NuevoVehiculo() {
   const queryClient = useQueryClient();
   const { valores, actualizar, limpiar } = useBorrador("borrador_vehiculo", inicial);
   const [foto, setFoto] = useState<File | null>(null);
+  const [licencia, setLicencia] = useState<File | null>(null);
   const [confirmarLimpieza, setConfirmarLimpieza] = useState(false);
   const [guardado, setGuardado] = useState(false);
 
   const clientes = useQuery({ queryKey: ["clientes"], queryFn: listarClientes });
   const subirDrive = useServerFn(subirEvidenciaDrive);
   const agendar = useServerFn(guardarEventoCalendar);
+  const leerDocumento = useServerFn(extraerDatosLicencia);
+
+  const leerLicencia = useMutation({
+    mutationFn: async () => {
+      if (!licencia) throw new Error("Sube primero la foto del documento");
+      return leerDocumento({
+        data: { base64: await archivoABase64(licencia), mimeType: licencia.type || "image/jpeg" },
+      });
+    },
+    onSuccess: (datos) => {
+      const asignar = (campo: keyof typeof inicial, valor?: string) => {
+        const limpio = limpiarTexto(valor ?? "");
+        if (limpio) actualizar(campo, limpio);
+      };
+      if (datos["placa"]) actualizar("placa", normalizarPlaca(datos["placa"]));
+      if (["Motocicleta", "Carro", "Camioneta"].includes(datos["tipo_vehiculo"] ?? ""))
+        actualizar("tipo_vehiculo", datos["tipo_vehiculo"] as string);
+      asignar("marca", datos["marca"]);
+      asignar("modelo_ano", datos["modelo_ano"]);
+      asignar("cilindrada", datos["cilindrada"]);
+      asignar("color", datos["color"]);
+      asignar("numero_chasis", datos["numero_chasis"]);
+      asignar("numero_motor", datos["numero_motor"]);
+      asignar("tipo_carroceria", datos["tipo_carroceria"]);
+      if (["Gasolina", "Diésel", "Eléctrico", "Híbrido"].includes(datos["tipo_combustible"] ?? ""))
+        actualizar("tipo_combustible", datos["tipo_combustible"] as string);
+      asignar("fecha_matricula", datos["fecha_matricula"]);
+      asignar("organismo_transito", datos["organismo_transito"]);
+      asignar("nombre_completo", datos["nombre_completo"]);
+      if (["CC", "CE", "PA", "NIT"].includes(datos["tipo_documento"] ?? ""))
+        actualizar("tipo_documento", datos["tipo_documento"] as string);
+      asignar("numero_documento", datos["numero_documento"]);
+      asignar("licencia_cat", datos["licencia_categorias"]);
+      asignar("licencia_ven", datos["licencia_vencimiento"]);
+      toast.success("Datos extraídos del documento y autorellenados");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "No fue posible leer el documento");
+    },
+  });
+
 
   const guardar = useMutation({
     mutationFn: async () => {
