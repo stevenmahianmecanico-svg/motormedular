@@ -69,6 +69,7 @@ export type Database = {
           created_at: string
           fecha_expedicion: string | null
           fecha_vencimiento: string
+          foto_url: string | null
           id: string
           numero_documento: string | null
           tipo_documento: string
@@ -81,6 +82,7 @@ export type Database = {
           created_at?: string
           fecha_expedicion?: string | null
           fecha_vencimiento: string
+          foto_url?: string | null
           id?: string
           numero_documento?: string | null
           tipo_documento: string
@@ -93,6 +95,7 @@ export type Database = {
           created_at?: string
           fecha_expedicion?: string | null
           fecha_vencimiento?: string
+          foto_url?: string | null
           id?: string
           numero_documento?: string | null
           tipo_documento?: string
@@ -126,8 +129,13 @@ export type Database = {
           km_promedio_dia: number | null
           placa: string
           procedimiento: string | null
+          producto_cantidad: number | null
+          producto_foto_url: string | null
+          producto_nombre: string | null
+          producto_unidad: string | null
           proxima_fecha: string | null
           proximo_km: number | null
+          recomendacion_ia: string | null
           repuestos_cambiados: string | null
           tipos_servicio: string[]
           updated_at: string
@@ -150,8 +158,13 @@ export type Database = {
           km_promedio_dia?: number | null
           placa: string
           procedimiento?: string | null
+          producto_cantidad?: number | null
+          producto_foto_url?: string | null
+          producto_nombre?: string | null
+          producto_unidad?: string | null
           proxima_fecha?: string | null
           proximo_km?: number | null
+          recomendacion_ia?: string | null
           repuestos_cambiados?: string | null
           tipos_servicio?: string[]
           updated_at?: string
@@ -174,8 +187,13 @@ export type Database = {
           km_promedio_dia?: number | null
           placa?: string
           procedimiento?: string | null
+          producto_cantidad?: number | null
+          producto_foto_url?: string | null
+          producto_nombre?: string | null
+          producto_unidad?: string | null
           proxima_fecha?: string | null
           proximo_km?: number | null
+          recomendacion_ia?: string | null
           repuestos_cambiados?: string | null
           tipos_servicio?: string[]
           updated_at?: string
@@ -191,6 +209,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      perfiles: {
+        Row: {
+          created_at: string
+          email: string
+          estado: Database["public"]["Enums"]["estado_acceso"]
+          id: string
+          metodo_registro: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          estado?: Database["public"]["Enums"]["estado_acceso"]
+          id: string
+          metodo_registro?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          estado?: Database["public"]["Enums"]["estado_acceso"]
+          id?: string
+          metodo_registro?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       personal_presente: {
         Row: {
@@ -224,6 +269,27 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       vehiculos: {
         Row: {
           cilindrada: string | null
@@ -238,6 +304,8 @@ export type Database = {
           km_mes: number | null
           km_promedio_dia: number | null
           km_semana: number | null
+          licencia_foto_url: string | null
+          licencia_texto: string | null
           marca: string | null
           meses_intervalo_aceite: number
           modelo_ano: string | null
@@ -263,6 +331,8 @@ export type Database = {
           km_mes?: number | null
           km_promedio_dia?: number | null
           km_semana?: number | null
+          licencia_foto_url?: string | null
+          licencia_texto?: string | null
           marca?: string | null
           meses_intervalo_aceite?: number
           modelo_ano?: string | null
@@ -288,6 +358,8 @@ export type Database = {
           km_mes?: number | null
           km_promedio_dia?: number | null
           km_semana?: number | null
+          licencia_foto_url?: string | null
+          licencia_texto?: string | null
           marca?: string | null
           meses_intervalo_aceite?: number
           modelo_ano?: string | null
@@ -315,10 +387,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      esta_aprobado: { Args: { _user_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "administrador" | "usuario"
+      estado_acceso: "pendiente" | "aprobado" | "rechazado"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -445,6 +525,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["administrador", "usuario"],
+      estado_acceso: ["pendiente", "aprobado", "rechazado"],
+    },
   },
 } as const
