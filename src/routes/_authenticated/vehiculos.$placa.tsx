@@ -119,13 +119,15 @@ function FichaVehiculo() {
   return (
     <AppShell titulo={v.placa} subtitulo={listaLegible([v.tipo_vehiculo, v.marca, v.modelo_ano, v.color])}>
       <section className="panel overflow-hidden">
-        {v.foto_url ? (
+        {enlaceDirectoDrive(v.foto_url) ? (
           <img
-            src={v.foto_url}
+            src={enlaceDirectoDrive(v.foto_url) as string}
             alt={`Fotografía del vehículo de placa ${v.placa}`}
+            loading="lazy"
             className="h-48 w-full object-cover"
           />
         ) : null}
+
         <div className="grid grid-cols-2 gap-3 p-4 text-sm sm:grid-cols-3">
           {[
             ["Cilindrada", v.cilindrada],
