@@ -93,6 +93,35 @@ function NuevoMantenimiento() {
 
   const vehiculo = (vehiculos.data ?? []).find((v) => v.id === valores.vehiculo_id);
 
+  const pedirRecomendacion = useServerFn(recomendarLubricacion);
+  const consultarIA = useMutation({
+    mutationFn: async () => {
+      if (!vehiculo) throw new Error("Selecciona el vehículo");
+      const imagen = productoFoto
+        ? {
+            base64: await archivoABase64(productoFoto),
+            mimeType: productoFoto.type || "image/jpeg",
+          }
+        : null;
+      return pedirRecomendacion({
+        data: {
+          pregunta: consulta,
+          vehiculo: `${vehiculo.tipo_vehiculo} ${vehiculo.marca ?? ""} ${vehiculo.modelo_ano ?? ""} ${vehiculo.cilindrada ?? ""}cc, placa ${vehiculo.placa}`,
+          servicios: formatoCorchetes(valores.tipos_servicio),
+          producto: valores.producto_nombre,
+          cantidad: `${valores.producto_cantidad} ${valores.producto_unidad}`.trim(),
+          imagen,
+        },
+      });
+    },
+    onSuccess: (datos) => setRecomendacion(datos.respuesta),
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "La IA no pudo responder");
+    },
+  });
+
+
+
   const subtotal = (Number(valores.costo_mano_obra) || 0) + (Number(valores.costo_repuestos) || 0);
   const iva = subtotal * ((Number(valores.iva_porcentaje) || 0) / 100);
   const total = subtotal + iva;
