@@ -185,6 +185,25 @@ function NuevoVehiculo() {
         fotoUrl = subida.archivos[0]?.url ?? null;
       }
 
+      // La foto de la licencia procesada queda asociada exclusivamente a este vehículo.
+      let licenciaUrl: string | null = null;
+      if (licencia) {
+        const subida = await subirDrive({
+          data: {
+            placa,
+            archivos: [
+              {
+                nombre: `licencia-${placa}-${Date.now()}.${licencia.name.split(".").pop() ?? "jpg"}`,
+                mimeType: licencia.type,
+                base64: await archivoABase64(licencia),
+              },
+            ],
+          },
+        });
+        licenciaUrl = subida.archivos[0]?.url ?? null;
+      }
+
+
       const { data: vehiculo, error: errorVehiculo } = await supabase
         .from("vehiculos")
         .insert({
