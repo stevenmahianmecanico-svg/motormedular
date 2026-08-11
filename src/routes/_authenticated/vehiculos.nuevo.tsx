@@ -14,6 +14,8 @@ import { useBorrador } from "@/hooks/useBorrador";
 import { listarClientes, TIPOS_DOCUMENTO_VEHICULO } from "@/lib/datos";
 import { archivoABase64, limpiarTexto, normalizarPlaca } from "@/lib/formato";
 import { guardarEventoCalendar, subirEvidenciaDrive } from "@/lib/google.functions";
+import { extraerDatosLicencia } from "@/lib/ia.functions";
+
 import { sumarDias } from "@/lib/telemetria";
 
 export const Route = createFileRoute("/_authenticated/vehiculos/nuevo")({
