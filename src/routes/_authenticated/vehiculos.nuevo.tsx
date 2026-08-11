@@ -14,6 +14,8 @@ import { useBorrador } from "@/hooks/useBorrador";
 import { listarClientes, TIPOS_DOCUMENTO_VEHICULO } from "@/lib/datos";
 import { archivoABase64, limpiarTexto, normalizarPlaca } from "@/lib/formato";
 import { guardarEventoCalendar, subirEvidenciaDrive } from "@/lib/google.functions";
+import { extraerDatosLicencia } from "@/lib/ia.functions";
+
 import { sumarDias } from "@/lib/telemetria";
 
 export const Route = createFileRoute("/_authenticated/vehiculos/nuevo")({
@@ -82,12 +84,54 @@ function NuevoVehiculo() {
   const queryClient = useQueryClient();
   const { valores, actualizar, limpiar } = useBorrador("borrador_vehiculo", inicial);
   const [foto, setFoto] = useState<File | null>(null);
+  const [licencia, setLicencia] = useState<File | null>(null);
   const [confirmarLimpieza, setConfirmarLimpieza] = useState(false);
   const [guardado, setGuardado] = useState(false);
 
   const clientes = useQuery({ queryKey: ["clientes"], queryFn: listarClientes });
   const subirDrive = useServerFn(subirEvidenciaDrive);
   const agendar = useServerFn(guardarEventoCalendar);
+  const leerDocumento = useServerFn(extraerDatosLicencia);
+
+  const leerLicencia = useMutation({
+    mutationFn: async () => {
+      if (!licencia) throw new Error("Sube primero la foto del documento");
+      return leerDocumento({
+        data: { base64: await archivoABase64(licencia), mimeType: licencia.type || "image/jpeg" },
+      });
+    },
+    onSuccess: (datos) => {
+      const asignar = (campo: keyof typeof inicial, valor?: string) => {
+        const limpio = limpiarTexto(valor ?? "");
+        if (limpio) actualizar(campo, limpio);
+      };
+      if (datos["placa"]) actualizar("placa", normalizarPlaca(datos["placa"]));
+      if (["Motocicleta", "Carro", "Camioneta"].includes(datos["tipo_vehiculo"] ?? ""))
+        actualizar("tipo_vehiculo", datos["tipo_vehiculo"] as string);
+      asignar("marca", datos["marca"]);
+      asignar("modelo_ano", datos["modelo_ano"]);
+      asignar("cilindrada", datos["cilindrada"]);
+      asignar("color", datos["color"]);
+      asignar("numero_chasis", datos["numero_chasis"]);
+      asignar("numero_motor", datos["numero_motor"]);
+      asignar("tipo_carroceria", datos["tipo_carroceria"]);
+      if (["Gasolina", "Diésel", "Eléctrico", "Híbrido"].includes(datos["tipo_combustible"] ?? ""))
+        actualizar("tipo_combustible", datos["tipo_combustible"] as string);
+      asignar("fecha_matricula", datos["fecha_matricula"]);
+      asignar("organismo_transito", datos["organismo_transito"]);
+      asignar("nombre_completo", datos["nombre_completo"]);
+      if (["CC", "CE", "PA", "NIT"].includes(datos["tipo_documento"] ?? ""))
+        actualizar("tipo_documento", datos["tipo_documento"] as string);
+      asignar("numero_documento", datos["numero_documento"]);
+      asignar("licencia_cat", datos["licencia_categorias"]);
+      asignar("licencia_ven", datos["licencia_vencimiento"]);
+      toast.success("Datos extraídos del documento y autorellenados");
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "No fue posible leer el documento");
+    },
+  });
+
 
   const guardar = useMutation({
     mutationFn: async () => {
@@ -141,6 +185,25 @@ function NuevoVehiculo() {
         fotoUrl = subida.archivos[0]?.url ?? null;
       }
 
+      // La foto de la licencia procesada queda asociada exclusivamente a este vehículo.
+      let licenciaUrl: string | null = null;
+      if (licencia) {
+        const subida = await subirDrive({
+          data: {
+            placa,
+            archivos: [
+              {
+                nombre: `licencia-${placa}-${Date.now()}.${licencia.name.split(".").pop() ?? "jpg"}`,
+                mimeType: licencia.type,
+                base64: await archivoABase64(licencia),
+              },
+            ],
+          },
+        });
+        licenciaUrl = subida.archivos[0]?.url ?? null;
+      }
+
+
       const { data: vehiculo, error: errorVehiculo } = await supabase
         .from("vehiculos")
         .insert({
@@ -157,6 +220,9 @@ function NuevoVehiculo() {
           fecha_matricula: valores.fecha_matricula || null,
           organismo_transito: limpiarTexto(valores.organismo_transito) || null,
           foto_url: fotoUrl,
+          licencia_foto_url: licenciaUrl,
+          licencia_texto: leerLicencia.data ? JSON.stringify(leerLicencia.data) : null,
+
           cliente_id: clienteId,
           km_intervalo_aceite: Number(valores.km_intervalo_aceite) || 3000,
           meses_intervalo_aceite: Number(valores.meses_intervalo_aceite) || 3,
@@ -233,7 +299,30 @@ function NuevoVehiculo() {
 
   return (
     <AppShell titulo="Nuevo vehículo" subtitulo="Ficha técnica, propietario y documentos legales">
+      <Seccion titulo="Lectura automática con IA">
+        <Campo etiqueta="Foto de licencia de tránsito o de conducción">
+          <Input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={(e) => setLicencia(e.target.files?.[0] ?? null)}
+          />
+        </Campo>
+        <Campo etiqueta="Autorelleno">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            disabled={!licencia || leerLicencia.isPending}
+            onClick={() => leerLicencia.mutate()}
+          >
+            {leerLicencia.isPending ? "Leyendo documento…" : "Extraer datos con IA"}
+          </Button>
+        </Campo>
+      </Seccion>
+
       <Seccion titulo="Ficha del vehículo">
+
         <Campo etiqueta="Placa" requerido ancho="half">
           <Input
             value={valores.placa}

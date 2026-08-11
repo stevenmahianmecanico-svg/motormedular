@@ -21,6 +21,8 @@ import {
 } from "@/lib/datos";
 import { archivoABase64, formatoCorchetes, limpiarTexto, moneda } from "@/lib/formato";
 import { guardarEventoCalendar, subirEvidenciaDrive } from "@/lib/google.functions";
+import { recomendarLubricacion } from "@/lib/ia.functions";
+
 import { calcularKmPorDia, proximoServicio, proyecciones } from "@/lib/telemetria";
 
 export const Route = createFileRoute("/_authenticated/mantenimientos/nuevo")({
@@ -64,6 +66,10 @@ const inicial = {
   iva_porcentaje: "0",
   personal: [] as string[],
   nombres_personal: "",
+  producto_nombre: "",
+  producto_cantidad: "",
+  producto_unidad: "Litros",
+
 };
 
 function NuevoMantenimiento() {
@@ -71,8 +77,12 @@ function NuevoMantenimiento() {
   const queryClient = useQueryClient();
   const { valores, actualizar, limpiar } = useBorrador("borrador_mantenimiento", inicial);
   const [fotos, setFotos] = useState<File[]>([]);
+  const [productoFoto, setProductoFoto] = useState<File | null>(null);
+  const [consulta, setConsulta] = useState("");
+  const [recomendacion, setRecomendacion] = useState("");
   const [confirmarLimpieza, setConfirmarLimpieza] = useState(false);
   const [estado, setEstado] = useState<null | { drive: boolean; calendar: boolean }>(null);
+
 
   const vehiculos = useQuery({ queryKey: ["vehiculos"], queryFn: listarVehiculos });
   const historial = useQuery({
@@ -84,6 +94,35 @@ function NuevoMantenimiento() {
   const agendar = useServerFn(guardarEventoCalendar);
 
   const vehiculo = (vehiculos.data ?? []).find((v) => v.id === valores.vehiculo_id);
+
+  const pedirRecomendacion = useServerFn(recomendarLubricacion);
+  const consultarIA = useMutation({
+    mutationFn: async () => {
+      if (!vehiculo) throw new Error("Selecciona el vehículo");
+      const imagen = productoFoto
+        ? {
+            base64: await archivoABase64(productoFoto),
+            mimeType: productoFoto.type || "image/jpeg",
+          }
+        : null;
+      return pedirRecomendacion({
+        data: {
+          pregunta: consulta,
+          vehiculo: `${vehiculo.tipo_vehiculo} ${vehiculo.marca ?? ""} ${vehiculo.modelo_ano ?? ""} ${vehiculo.cilindrada ?? ""}cc, placa ${vehiculo.placa}`,
+          servicios: formatoCorchetes(valores.tipos_servicio),
+          producto: valores.producto_nombre,
+          cantidad: `${valores.producto_cantidad} ${valores.producto_unidad}`.trim(),
+          imagen,
+        },
+      });
+    },
+    onSuccess: (datos) => setRecomendacion(datos.respuesta),
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "La IA no pudo responder");
+    },
+  });
+
+
 
   const subtotal = (Number(valores.costo_mano_obra) || 0) + (Number(valores.costo_repuestos) || 0);
   const iva = subtotal * ((Number(valores.iva_porcentaje) || 0) / 100);
@@ -134,7 +173,25 @@ function NuevoMantenimiento() {
         fotosUrls = subida.archivos.map((a) => a.url);
         carpeta = subida.folderUrl;
       }
+
+      let productoUrl: string | null = null;
+      if (productoFoto) {
+        const subida = await subirDrive({
+          data: {
+            placa: vehiculo.placa,
+            archivos: [
+              {
+                nombre: `producto-${vehiculo.placa}-${Date.now()}.${productoFoto.name.split(".").pop() ?? "jpg"}`,
+                mimeType: productoFoto.type,
+                base64: await archivoABase64(productoFoto),
+              },
+            ],
+          },
+        });
+        productoUrl = subida.archivos[0]?.url ?? null;
+      }
       setEstado({ drive: true, calendar: false });
+
 
       // 2) Predicción del próximo servicio (el límite que ocurra primero)
       const prediccion = proximoServicio({
@@ -164,6 +221,12 @@ function NuevoMantenimiento() {
           valor_total: total,
           fotos_urls: fotosUrls,
           drive_folder_url: carpeta,
+          producto_nombre: limpiarTexto(valores.producto_nombre) || null,
+          producto_foto_url: productoUrl,
+          producto_cantidad: Number(valores.producto_cantidad) || null,
+          producto_unidad: valores.producto_unidad,
+          recomendacion_ia: recomendacion || null,
+
           km_promedio_dia: kmPorDia,
           proximo_km: prediccion.proximoKm,
           proxima_fecha: prediccion.proximaFecha,
@@ -364,6 +427,69 @@ function NuevoMantenimiento() {
           ) : null}
         </Campo>
       </Seccion>
+
+      <Seccion titulo="Productos e insumos con asistente de IA">
+        <Campo etiqueta="Producto utilizado" ancho="half">
+          <Input
+            value={valores.producto_nombre}
+            onChange={(e) => actualizar("producto_nombre", e.target.value)}
+            placeholder="Aceite 20W-50 semisintético"
+          />
+        </Campo>
+        <Campo etiqueta="Foto del producto" ancho="half">
+          <Input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={(e) => setProductoFoto(e.target.files?.[0] ?? null)}
+          />
+        </Campo>
+        <Campo etiqueta="Cantidad utilizada" ancho="half">
+          <Input
+            type="number"
+            step="0.01"
+            value={valores.producto_cantidad}
+            onChange={(e) => actualizar("producto_cantidad", e.target.value)}
+            placeholder="1.2"
+          />
+        </Campo>
+        <Campo etiqueta="Unidad" ancho="half">
+          <select
+            className={selectClase}
+            value={valores.producto_unidad}
+            onChange={(e) => actualizar("producto_unidad", e.target.value)}
+          >
+            {["Litros", "Mililitros", "Galones", "Unidades"].map((u) => (
+              <option key={u}>{u}</option>
+            ))}
+          </select>
+        </Campo>
+        <Campo etiqueta="Consulta al asistente técnico">
+          <Textarea
+            rows={2}
+            value={consulta}
+            onChange={(e) => setConsulta(e.target.value)}
+            placeholder="¿Este aceite y esta cantidad son óptimos para este vehículo?"
+          />
+        </Campo>
+        <Campo etiqueta="Recomendación">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            disabled={consultarIA.isPending || !vehiculo}
+            onClick={() => consultarIA.mutate()}
+          >
+            {consultarIA.isPending ? "Analizando…" : "Consultar a la IA de lubricación"}
+          </Button>
+          {recomendacion ? (
+            <div className="glass-card mt-3 rounded-xl p-3 text-sm whitespace-pre-wrap">
+              {recomendacion}
+            </div>
+          ) : null}
+        </Campo>
+      </Seccion>
+
 
       <Seccion titulo="Desglose económico">
         <Campo etiqueta="Costo de mano de obra" ancho="half">

@@ -5,8 +5,11 @@ import { Gauge, Mail, MessageCircle } from "lucide-react";
 import { AccionesCalendario } from "@/components/AccionesCalendario";
 import { AppShell } from "@/components/AppShell";
 import { SemaforoVigencia } from "@/components/SemaforoVigencia";
+import { VisorEvidencias } from "@/components/VisorEvidencias";
 import { Button } from "@/components/ui/button";
+import { enlaceDirectoDrive } from "@/lib/drive";
 import { supabase } from "@/integrations/supabase/client";
+
 import {
   listarDocumentos,
   listarMantenimientos,
@@ -116,13 +119,15 @@ function FichaVehiculo() {
   return (
     <AppShell titulo={v.placa} subtitulo={listaLegible([v.tipo_vehiculo, v.marca, v.modelo_ano, v.color])}>
       <section className="panel overflow-hidden">
-        {v.foto_url ? (
+        {enlaceDirectoDrive(v.foto_url) ? (
           <img
-            src={v.foto_url}
+            src={enlaceDirectoDrive(v.foto_url) as string}
             alt={`Fotografía del vehículo de placa ${v.placa}`}
+            loading="lazy"
             className="h-48 w-full object-cover"
           />
         ) : null}
+
         <div className="grid grid-cols-2 gap-3 p-4 text-sm sm:grid-cols-3">
           {[
             ["Cilindrada", v.cilindrada],
@@ -250,16 +255,10 @@ function FichaVehiculo() {
                 Próximo: {m.proximo_km?.toLocaleString("es-CO") ?? "—"} km ·{" "}
                 {fechaLegible(m.proxima_fecha)}
               </p>
-              {m.drive_folder_url ? (
-                <a
-                  href={m.drive_folder_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-1 inline-block text-xs text-accent underline"
-                >
-                  Evidencias en Google Drive
-                </a>
+              {m.fotos_urls.length > 0 ? (
+                <VisorEvidencias fotos={m.fotos_urls} titulo={`servicio del ${m.fecha_servicio}`} />
               ) : null}
+
               {m.proxima_fecha ? (
                 <div className="mt-3">
                   <AccionesCalendario

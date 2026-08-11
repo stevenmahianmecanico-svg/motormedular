@@ -8,6 +8,8 @@ import { AppShell } from "@/components/AppShell";
 import { SemaforoVigencia } from "@/components/SemaforoVigencia";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { enlaceDirectoDrive } from "@/lib/drive";
+
 import {
   listarDocumentos,
   listarMantenimientos,
@@ -165,9 +167,10 @@ function Panel() {
                 params={{ placa: v.placa }}
                 className="flex items-center gap-3 rounded-xl border border-border bg-card/60 p-3 transition-colors hover:border-primary/60"
               >
-                {v.foto_url ? (
+                {enlaceDirectoDrive(v.foto_url, 400) ? (
                   <img
-                    src={v.foto_url}
+                    src={enlaceDirectoDrive(v.foto_url, 400) as string}
+
                     alt={`Vehículo de placa ${v.placa}`}
                     loading="lazy"
                     className="size-14 rounded-lg object-cover"
