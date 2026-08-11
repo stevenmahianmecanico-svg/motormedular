@@ -203,6 +203,12 @@ function NuevoMantenimiento() {
           valor_total: total,
           fotos_urls: fotosUrls,
           drive_folder_url: carpeta,
+          producto_nombre: limpiarTexto(valores.producto_nombre) || null,
+          producto_foto_url: productoUrl,
+          producto_cantidad: Number(valores.producto_cantidad) || null,
+          producto_unidad: valores.producto_unidad,
+          recomendacion_ia: recomendacion || null,
+
           km_promedio_dia: kmPorDia,
           proximo_km: prediccion.proximoKm,
           proxima_fecha: prediccion.proximaFecha,
