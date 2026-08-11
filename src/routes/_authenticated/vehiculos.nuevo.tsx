@@ -220,6 +220,9 @@ function NuevoVehiculo() {
           fecha_matricula: valores.fecha_matricula || null,
           organismo_transito: limpiarTexto(valores.organismo_transito) || null,
           foto_url: fotoUrl,
+          licencia_foto_url: licenciaUrl,
+          licencia_texto: leerLicencia.data ? JSON.stringify(leerLicencia.data) : null,
+
           cliente_id: clienteId,
           km_intervalo_aceite: Number(valores.km_intervalo_aceite) || 3000,
           meses_intervalo_aceite: Number(valores.meses_intervalo_aceite) || 3,
