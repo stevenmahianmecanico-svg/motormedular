@@ -67,8 +67,12 @@ export function AppShell({
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 glass-overlay border-t border-border">
-        <div className="mx-auto grid max-w-3xl grid-cols-4">
-          {enlaces.map(({ to, icono: Icono, texto }) => (
+        <div
+          className="mx-auto grid max-w-3xl"
+          style={{ gridTemplateColumns: `repeat(${navegacion.length}, minmax(0, 1fr))` }}
+        >
+          {navegacion.map(({ to, icono: Icono, texto }) => (
+
             <Link
               key={to}
               to={to}
