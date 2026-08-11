@@ -1,9 +1,12 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
-import { CalendarClock, Car, LogOut, Plus, Users, Wrench } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { CalendarClock, Car, LogOut, Plus, ShieldCheck, Users, Wrench } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { asegurarAcceso } from "@/lib/acceso.functions";
 
 const enlaces = [
   { to: "/panel", icono: Car, texto: "Panel" },
@@ -22,6 +25,12 @@ export function AppShell({
   children: ReactNode;
 }) {
   const router = useRouter();
+  const verificar = useServerFn(asegurarAcceso);
+  const acceso = useQuery({ queryKey: ["acceso"], queryFn: () => verificar({}) });
+  const navegacion = acceso.data?.esAdmin
+    ? [...enlaces, { to: "/admin", icono: ShieldCheck, texto: "Admin" }]
+    : enlaces;
+
 
   return (
     <div className="min-h-screen pb-24">
