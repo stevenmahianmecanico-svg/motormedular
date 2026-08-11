@@ -75,8 +75,12 @@ function NuevoMantenimiento() {
   const queryClient = useQueryClient();
   const { valores, actualizar, limpiar } = useBorrador("borrador_mantenimiento", inicial);
   const [fotos, setFotos] = useState<File[]>([]);
+  const [productoFoto, setProductoFoto] = useState<File | null>(null);
+  const [consulta, setConsulta] = useState("");
+  const [recomendacion, setRecomendacion] = useState("");
   const [confirmarLimpieza, setConfirmarLimpieza] = useState(false);
   const [estado, setEstado] = useState<null | { drive: boolean; calendar: boolean }>(null);
+
 
   const vehiculos = useQuery({ queryKey: ["vehiculos"], queryFn: listarVehiculos });
   const historial = useQuery({
