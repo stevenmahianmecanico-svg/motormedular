@@ -173,7 +173,25 @@ function NuevoMantenimiento() {
         fotosUrls = subida.archivos.map((a) => a.url);
         carpeta = subida.folderUrl;
       }
+
+      let productoUrl: string | null = null;
+      if (productoFoto) {
+        const subida = await subirDrive({
+          data: {
+            placa: vehiculo.placa,
+            archivos: [
+              {
+                nombre: `producto-${vehiculo.placa}-${Date.now()}.${productoFoto.name.split(".").pop() ?? "jpg"}`,
+                mimeType: productoFoto.type,
+                base64: await archivoABase64(productoFoto),
+              },
+            ],
+          },
+        });
+        productoUrl = subida.archivos[0]?.url ?? null;
+      }
       setEstado({ drive: true, calendar: false });
+
 
       // 2) Predicción del próximo servicio (el límite que ocurra primero)
       const prediccion = proximoServicio({
