@@ -62,6 +62,27 @@ export type Database = {
         }
         Relationships: []
       }
+      config_aceite: {
+        Row: {
+          km_alerta: number
+          km_vida: number
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          km_alerta?: number
+          km_vida: number
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          km_alerta?: number
+          km_vida?: number
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       documentos_vencimiento: {
         Row: {
           calendar_event_id: string | null
@@ -268,6 +289,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      registros_turno: {
+        Row: {
+          confianza: number | null
+          creado_por: string | null
+          created_at: string
+          fecha: string
+          id: string
+          kilometraje: number
+          placa: string
+          tipo: string
+          vehiculo_id: string
+        }
+        Insert: {
+          confianza?: number | null
+          creado_por?: string | null
+          created_at?: string
+          fecha?: string
+          id?: string
+          kilometraje: number
+          placa: string
+          tipo: string
+          vehiculo_id: string
+        }
+        Update: {
+          confianza?: number | null
+          creado_por?: string | null
+          created_at?: string
+          fecha?: string
+          id?: string
+          kilometraje?: number
+          placa?: string
+          tipo?: string
+          vehiculo_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
