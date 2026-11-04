@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { ConfigAceiteAdmin } from "@/components/ConfigAceiteAdmin";
 import { ModalConfirmacion } from "@/components/ModalConfirmacion";
 import { Button } from "@/components/ui/button";
 import {
@@ -180,6 +181,8 @@ function Admin() {
           ) : null}
         </ul>
       </section>
+
+      <ConfigAceiteAdmin />
 
       <ModalConfirmacion
         abierto={accion !== null}

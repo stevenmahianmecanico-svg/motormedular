@@ -66,7 +66,7 @@ export const scanOdometer = createServerFn({ method: "POST" })
         method: "POST",
         headers: { "Content-Type": "application/json", "Lovable-API-Key": clave },
         body: JSON.stringify({
-          model: "google/gemini-3.6-flash",
+          model: "google/gemini-3.8-flash",
           response_format: { type: "json_object" },
           messages: [
             { role: "system", content: PROMPT },
