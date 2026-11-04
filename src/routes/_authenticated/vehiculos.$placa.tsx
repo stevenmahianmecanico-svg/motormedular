@@ -5,6 +5,7 @@ import { Gauge, Mail, MessageCircle } from "lucide-react";
 import { AccionesCalendario } from "@/components/AccionesCalendario";
 import { AppShell } from "@/components/AppShell";
 import { SemaforoVigencia } from "@/components/SemaforoVigencia";
+import { TurnoOdometro } from "@/components/TurnoOdometro";
 import { VisorEvidencias } from "@/components/VisorEvidencias";
 import { Button } from "@/components/ui/button";
 import { enlaceDirectoDrive } from "@/lib/drive";
@@ -145,6 +146,8 @@ function FichaVehiculo() {
           ))}
         </div>
       </section>
+
+      <TurnoOdometro vehiculo={v} mantenimientos={mantenimientos.data ?? []} />
 
       <section className="panel p-4">
         <h2 className="flex items-center gap-2 font-display text-xl uppercase">
