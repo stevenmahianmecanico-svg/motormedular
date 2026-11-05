@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep daily-route extensions in separate jornada modules and additive companion tables; this preserves existing vehicle, client and maintenance schemas.
+- Write jornadas through an authenticated, idempotent transactional RPC; this saves shifts and optional trips/fuel together without duplicate days.
+- Render PDFs to images only in browser memory and parse EXIF in the capture handler; this preserves the existing OCR model and avoids file storage.
+- Use one guarded generated service-worker registration with icon-only caching; installability must never cache private data or affect previews.

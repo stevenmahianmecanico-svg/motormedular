@@ -83,6 +83,51 @@ export type Database = {
         }
         Relationships: []
       }
+      detalles_jornada: {
+        Row: {
+          combustible: Json | null
+          fecha: string
+          registrado_en: string
+          tipo: string
+          trayectos: Json
+          turno_id: string
+          vehiculo_id: string
+        }
+        Insert: {
+          combustible?: Json | null
+          fecha: string
+          registrado_en: string
+          tipo: string
+          trayectos?: Json
+          turno_id: string
+          vehiculo_id: string
+        }
+        Update: {
+          combustible?: Json | null
+          fecha?: string
+          registrado_en?: string
+          tipo?: string
+          trayectos?: Json
+          turno_id?: string
+          vehiculo_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "detalles_jornada_turno_id_fkey"
+            columns: ["turno_id"]
+            isOneToOne: true
+            referencedRelation: "registros_turno"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "detalles_jornada_vehiculo_id_fkey"
+            columns: ["vehiculo_id"]
+            isOneToOne: false
+            referencedRelation: "vehiculos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documentos_vencimiento: {
         Row: {
           calendar_event_id: string | null
@@ -230,6 +275,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      odometro_estado_ia: {
+        Row: {
+          motivo: string
+          user_id: string
+        }
+        Insert: {
+          motivo: string
+          user_id: string
+        }
+        Update: {
+          motivo?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       perfiles: {
         Row: {
@@ -445,6 +505,20 @@ export type Database = {
     }
     Functions: {
       esta_aprobado: { Args: { _user_id: string }; Returns: boolean }
+      guardar_jornada: {
+        Args: {
+          p_combustible?: Json
+          p_confianza?: number
+          p_fecha: string
+          p_id: string
+          p_instante: string
+          p_km: number
+          p_tipo: string
+          p_trayectos?: Json
+          p_vehiculo: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
