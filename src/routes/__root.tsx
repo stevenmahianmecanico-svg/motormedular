@@ -15,7 +15,6 @@ import { Toaster } from "../components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { InstalarAplicacion } from "@/components/InstalarAplicacion";
 
-
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -82,12 +81,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Taller Medular" },
-      { name: "description", content: "Gestión de vehículos, jornadas y servicios de Taller Medular." },
+      {
+        name: "description",
+        content: "Gestión de vehículos, jornadas y servicios de Taller Medular.",
+      },
       { name: "theme-color", content: "#f0a132" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "Taller Medular" },
       { property: "og:title", content: "Taller Medular" },
-      { property: "og:description", content: "Gestión de vehículos, jornadas y servicios de Taller Medular." },
+      {
+        property: "og:description",
+        content: "Gestión de vehículos, jornadas y servicios de Taller Medular.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -132,5 +137,4 @@ function RootComponent() {
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
-
 }
