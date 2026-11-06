@@ -13,3 +13,4 @@
 - Write jornadas through an authenticated, idempotent transactional RPC; this saves shifts and optional trips/fuel together without duplicate days.
 - Render PDFs to images only in browser memory and parse EXIF in the capture handler; this preserves the existing OCR model and avoids file storage.
 - Use one guarded generated service-worker registration with icon-only caching; installability must never cache private data or affect previews.
+- Resolve PWA precache inputs from public and emit the worker into dist/client; TanStack's separate build environments must not leave Workbox without icon inputs.

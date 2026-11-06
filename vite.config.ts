@@ -6,6 +6,7 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { VitePWA } from "vite-plugin-pwa";
+import { pwaWorkboxOptions } from "./pwa.config";
 
 export default defineConfig({
   vite: {
@@ -13,17 +14,13 @@ export default defineConfig({
       VitePWA({
         strategies: "generateSW",
         filename: "sw.js",
+        outDir: "dist/client",
         registerType: "autoUpdate",
         injectRegister: null,
         manifest: false,
         devOptions: { enabled: false },
-        workbox: {
-          // No offline mode or caching of private screens, photos, PDFs, APIs, or authentication.
-          globPatterns: ["icons/*.png"],
-          navigateFallback: null,
-          runtimeCaching: [],
-          cleanupOutdatedCaches: true,
-        },
+        // No caching of private screens, photos, PDFs, APIs, or authentication.
+        workbox: pwaWorkboxOptions,
       }),
     ],
   },
